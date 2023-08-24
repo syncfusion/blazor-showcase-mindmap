@@ -1,0 +1,1064 @@
+@using Syncfusion.Blazor.Diagram
+@using Syncfusion.Blazor.Buttons
+@using System.Collections.ObjectModel
+@using System.Text.Json;
+@inherits SampleBaseComponent;
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Popups
+@namespace MindMap
+
+
+<div class="db-diagram-container">
+    <div id="palette-space" class="sb-mobile-palette" style="display:@DisplayTreeViewNodes">
+        <div id="treeview">
+            <SfTreeView @ref="Dom" TValue="TreeItem" ExpandOn="ExpandAction.None" AllowEditing="true" @bind-SelectedNodes="@selectedNodes" >
+                <TreeViewFieldsSettings Id="Id"  DataSource="@TreeViewNodes" Text="Name" ParentID="ParentId" HasChildren="HasChild" Expanded="Expanded" Selected="IsSelected"></TreeViewFieldsSettings>
+                <TreeViewEvents TValue="TreeItem" OnKeyPress="OnKeyPressHandler" NodeCollapsed="NodeCollapsedHandler" NodeSelected="OnSelect" NodeClicked="nodeClicked" NodeEdited="NodeEditing"></TreeViewEvents>
+                <SfContextMenu TValue="MenuItem" @ref="menu" Target="#treeview" Items="@menuItems">
+                    <MenuEvents TValue="MenuItem" ItemSelected="MenuSelect"></MenuEvents>
+                </SfContextMenu>
+           </SfTreeView>
+           </div>
+        </div>
+    <div id="diagramContainerDiv" class=@DiagramContainerClassName style="position:relative;display:@DisplayDiagramNodes">
+        <SfDiagramComponent @ref="@Diagram" NodeCreating="@NodeDefaults" ConnectorCreating= "@ConnectorDefaults" @bind-Width="@diagramWidth" @bind-Height="@diagramHeight"  SelectionChanged ="@SelectionChanged" DragDrop="@Drop" @bind-Nodes="@nodes" @bind-Connectors="@connectors"  HistoryChanged="@HistoryChange"  InteractionController="@diagramTool"  ScrollChanged="ScrollChanged" GetCustomTool="@GetCustomTool" CollectionChanged="CollectionChanged" SelectionSettings="@SelectedModel" TextChanged="TextChanged" Created="Created">
+            <PageSettings @bind-ShowPageBreaks="@diagramShowPageBreaks" @bind-Orientation="@DiagramOrientation" @bind-Width="@DiagramPageWidth" @bind-Height="@DiagramPageHeight" @bind-MultiplePage=@IsMultiplePage>
+                <BackgroundStyle @bind-Background="@diagramBgColor"></BackgroundStyle>
+                <PageMargin @bind-Left="@marginLeft" @bind-Top="@marginRight"></PageMargin>
+            </PageSettings>
+            <DiagramHistoryManager HistoryAdding="@HistoryAdd" ></DiagramHistoryManager>
+            <SnapSettings @bind-Constraints="@SnapConstraint">
+                <HorizontalGridLines LineIntervals="@SnapIntervals" LineColor="@Hlinecolor"></HorizontalGridLines>
+                <VerticalGridLines LineIntervals="@SnapIntervals" LineColor="@Hlinecolor"></VerticalGridLines>
+            </SnapSettings>
+            <ScrollSettings @bind-ScrollLimit="@scrollLimit" @bind-CurrentZoom="@CurrentZoom" @bind-MaxZoom="@maxZoom" @bind-MinZoom="@minZoom"></ScrollSettings>
+                <CommandManager @bind-Commands="@commands" Execute="@ExecuteCommand" CanExecute="@CanExecute" />
+                <Layout  Type="LayoutType.MindMap" @bind-HorizontalSpacing="@HorizontalSpacing" @bind-VerticalSpacing="@VerticalSpacing" @bind-HorizontalAlignment="@horizontalAlignment" @bind-VerticalAlignment="@verticalAlignment" GetBranch="@getbranch" GetLayoutInfo="@getLayoutInfo"></Layout>
+        </SfDiagramComponent>
+    </div>
+</div>
+
+@code {
+    #pragma warning disable BL0005
+    /// <summary>
+    /// Object reference for SfContextMenu items.
+    /// </summary>
+    SfContextMenu<MenuItem> menu;
+
+    /// <summary>
+    /// Horizontal alignment for the diagram.
+    /// </summary>
+    private HorizontalAlignment horizontalAlignment = HorizontalAlignment.Auto;
+    /// <summary>
+    /// Vertical alignment for the diagram.
+    /// </summary>
+    private VerticalAlignment verticalAlignment = VerticalAlignment.Auto;
+    /// <summary>
+    /// Index value for adding treeview nodes.
+    /// </summary>
+    private int index = 1;
+    /// <summary>
+    /// Datasource for the tree view component menu items.
+    /// </summary>
+    public List<MenuItem> menuItems = new List<MenuItem>{
+        new MenuItem { Text = "Add New Item"},
+        new MenuItem { Text = "Rename Item" },
+        new MenuItem { Text = "Remove Item" }
+
+    };
+    /// <summary>
+    /// Object reference for DiagramMain items.
+    /// </summary>
+    internal DiagramMain Parent;
+    /// <summary>
+    /// Controls the display of tree view nodes.
+    /// </summary>
+    public string DisplayTreeViewNodes = "none";
+    /// <summary>
+    /// Controls the display of diagram nodes.
+    /// </summary>
+    public string DisplayDiagramNodes = "block";
+    /// <summary>
+    /// Object reference for SfTreeView instance.
+    /// </summary>
+    public SfTreeView<TreeItem> Dom;
+    /// <summary>
+    /// The ID of the selected node.
+    /// </summary>
+    private string selectedId;
+    /// <summary>
+    /// Array of IDs of the selected nodes.
+    /// </summary>
+    private string[] selectedNodes = Array.Empty<string>();
+    /// <summary>
+    /// The tool used for diagram interactions.
+    /// </summary>
+    private DiagramInteractions diagramTool = DiagramInteractions.Default & ~DiagramInteractions.MultipleSelect;
+    /// <summary>
+    /// The minimum zoom level allowed for the diagram.
+    /// </summary>
+    private double minZoom { get; set; } = 0.25;
+    /// <summary>
+    /// The maximum zoom level allowed for the diagram.
+    /// </summary>
+    private double maxZoom { get; set; } = 30;
+    /// <summary>
+    /// Specifies whether page breaks should be shown in the diagram.
+    /// </summary>
+    private bool diagramShowPageBreaks;
+    /// <summary>
+    /// Background color of the diagram.
+    /// </summary>
+    private string diagramBgColor = "white";
+    /// <summary>
+    /// The scroll limit mode for the diagram.
+    /// </summary>
+    private ScrollLimitMode scrollLimit { get; set; } = ScrollLimitMode.Infinity;
+    /// <summary>
+    /// Object reference for SfDiagramComponent class.
+    /// </summary>
+    public SfDiagramComponent Diagram;
+    /// <summary>
+    /// Collection of nodes for the diagram.
+    /// </summary>
+    public DiagramObjectCollection<Node> nodes { get; set; } = new DiagramObjectCollection<Node>();
+    /// <summary>
+    /// Collection of connectors for the diagram.
+    /// </summary>
+    public DiagramObjectCollection<Connector> connectors  {get;set;}= new DiagramObjectCollection<Connector>();
+    /// <summary>
+    /// Settings for the selected model in the diagram.
+    /// </summary>
+    public Syncfusion.Blazor.Diagram.DiagramSelectionSettings SelectedModel { get; set; }
+    /// <summary>
+    /// CSS class name for the diagram container.
+    /// </summary>
+    public string DiagramContainerClassName = "db-current-diagram-container";
+    /// <summary>
+    /// The current zoom level of the diagram.
+    /// </summary>
+    public double CurrentZoom { get; set; } = 1;
+    /// <summary>
+    /// The orientation of the diagram page.
+    /// </summary>
+    public PageOrientation DiagramOrientation = PageOrientation.Landscape;
+    /// <summary>
+    /// The width of the diagram page.
+    /// </summary>
+    public double? DiagramPageWidth = 816;
+    /// <summary>
+    /// The height of the diagram page.
+    /// </summary>
+    public double? DiagramPageHeight = 1056;
+    /// <summary>
+    /// The width of the diagram.
+    /// </summary>
+    public string diagramWidth = "100%";
+    /// <summary>
+    /// The height of the diagram.
+    /// </summary>
+    public string diagramHeight = "100%";
+    /// <summary>
+    /// Left margin for the diagram page.
+    /// </summary>
+    double marginLeft = 5;
+    /// <summary>
+    /// Right margin for the diagram page.
+    /// </summary>
+    double marginRight = 5;
+    /// <summary>
+    /// Color of horizontal lines in the diagram.
+    /// </summary>
+    public string Hlinecolor { get; set; } = "lightgray";
+    /// <summary>
+    /// Specifies whether the diagram has multiple pages.
+    /// </summary>
+    public bool IsMultiplePage = true;
+    /// <summary>
+    /// Specifies whether the undo functionality is enabled in the diagram.
+    /// </summary>
+    public bool IsUndo = false;
+    /// <summary>
+    /// Specifies whether the redo functionality is enabled in the diagram.
+    /// </summary>
+    public bool IsRedo = false;
+    /// <summary>
+    /// Snap constraints for the diagram.
+    /// </summary>
+    public SnapConstraints SnapConstraint = SnapConstraints.None;
+    /// <summary>
+    /// Array of snap intervals for the diagram.
+    /// </summary>
+    public double[] SnapIntervals { get; set; } = new double[] {1, 9, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75, 0.25, 9.75};
+    /// <summary>
+    /// Vertical spacing value for the diagram.
+    /// </summary>
+    int VerticalSpacing = 50;
+    /// <summary>
+    /// Horizontal spacing value for the diagram.
+    /// </summary>
+    int HorizontalSpacing = 100;
+    /// <summary>
+    /// Specifies whether the diagram is selected.
+    /// </summary>
+    public bool diagramSelected = false;
+    /// <summary>
+    /// Collection of keyboard commands for the diagram.
+    /// </summary>
+    DiagramObjectCollection<KeyboardCommand> commands = new DiagramObjectCollection<KeyboardCommand>();
+    /// <summary>
+    /// Specifies the DataSource value for TreeView component.
+    /// </summary>
+    public List<TreeItem> TreeViewNodes = new List<TreeItem>();
+    /// <summary>
+    /// Collection of user handles for the diagram.
+    /// </summary>
+    DiagramObjectCollection<UserHandle> UserHandles = new DiagramObjectCollection<UserHandle>();
+    protected override void OnInitialized()
+    {
+        InitDiagramModel();
+        commands = new DiagramObjectCollection<KeyboardCommand>()
+        {
+            new KeyboardCommand() { Name = "showShortCut", Gesture = new KeyGesture(){ Key = DiagramKeys.F1, Modifiers = ModifierKeys.None } },
+            new KeyboardCommand() { Name = "editing", Gesture = new KeyGesture(){ Key = DiagramKeys.F2, Modifiers = ModifierKeys.None } },
+            new KeyboardCommand() { Name = "leftChild", Gesture = new KeyGesture(){ Key = DiagramKeys.Tab, Modifiers = ModifierKeys.Shift } },
+            new KeyboardCommand() { Name = "rightChild", Gesture = new KeyGesture(){ Key = DiagramKeys.Tab,Modifiers = ModifierKeys.None } },
+            new KeyboardCommand() { Name = "sibilingChildTop", Gesture = new KeyGesture(){ Key = DiagramKeys.Enter,Modifiers = ModifierKeys.None } },
+            new KeyboardCommand() { Name = "fitPage", Gesture = new KeyGesture(){ Key = DiagramKeys.F8, Modifiers = ModifierKeys.None } },
+
+            new KeyboardCommand() { Name = "navigationUp", Gesture = new KeyGesture(){ Key = DiagramKeys.ArrowUp, Modifiers = ModifierKeys.None } },
+            new KeyboardCommand() { Name = "navigationDown", Gesture = new KeyGesture(){ Key = DiagramKeys.ArrowDown, Modifiers = ModifierKeys.None } },
+            new KeyboardCommand() { Name = "navigationLeft", Gesture = new KeyGesture(){ Key = DiagramKeys.ArrowLeft, Modifiers = ModifierKeys.None } },
+            new KeyboardCommand() { Name = "navigationRight", Gesture = new KeyGesture(){ Key = DiagramKeys.ArrowRight,Modifiers = ModifierKeys.None } },
+
+            new KeyboardCommand() { Name = "cutObject", Gesture = new KeyGesture(){ Key = DiagramKeys.X, Modifiers = ModifierKeys.Control  } },
+            new KeyboardCommand() { Name = "copyObject", Gesture = new KeyGesture(){ Key = DiagramKeys.C, Modifiers = ModifierKeys.Control  } },
+            new KeyboardCommand() { Name = "pasteObject", Gesture = new KeyGesture(){ Key = DiagramKeys.V, Modifiers = ModifierKeys.Control  } },
+
+            new KeyboardCommand() { Name = "fileNew", Gesture = new KeyGesture(){ Key = DiagramKeys.N, Modifiers = ModifierKeys.Shift } },
+            new KeyboardCommand() { Name = "fileOpen", Gesture = new KeyGesture(){ Key = DiagramKeys.O, Modifiers = ModifierKeys.Control } },
+            new KeyboardCommand() { Name = "fileSave", Gesture = new KeyGesture(){ Key = DiagramKeys.S, Modifiers = ModifierKeys.Control } },
+            new KeyboardCommand() { Name = "duplicate", Gesture = new KeyGesture(){ Key = DiagramKeys.D, Modifiers = ModifierKeys.Control } },
+            new KeyboardCommand() { Name = "group", Gesture = new KeyGesture(){ Key = DiagramKeys.G, Modifiers = ModifierKeys.Control } },
+            new KeyboardCommand() { Name = "underline", Gesture = new KeyGesture(){ Key = DiagramKeys.U, Modifiers = ModifierKeys.Control } },
+            new KeyboardCommand() { Name = "italic", Gesture = new KeyGesture(){ Key = DiagramKeys.I, Modifiers = ModifierKeys.Control } },
+            new KeyboardCommand() { Name = "bold", Gesture = new KeyGesture(){ Key = DiagramKeys.B, Modifiers = ModifierKeys.Control  } },
+            new KeyboardCommand() { Name = "delete", Gesture = new KeyGesture(){ Key = DiagramKeys.Delete, Modifiers = ModifierKeys.None  } },
+            new KeyboardCommand() { Name = "backspace", Gesture = new KeyGesture(){ Key = DiagramKeys.BackSpace, Modifiers = ModifierKeys.None  } },
+            new KeyboardCommand() { Name = "bringToFront", Gesture = new KeyGesture(){ Key = DiagramKeys.F, Modifiers = ModifierKeys.Control | ModifierKeys.Shift } },
+        };
+        TreeViewNodes.Add(new TreeItem
+            {
+                Id = "rootNode",
+                Name = "Creativity",
+                Expanded = true,
+            });
+    }
+    /// <summary>
+    /// This method is called asynchronously when the component has completed its initialization.
+    /// Override this method to perform additional initialization logic that requires async operations.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+    /// <summary>
+    /// Method invoked after each time the component has been rendered.
+    /// </summary>
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+    }
+    public async void OnKeyPressHandler(NodeKeyPressEventArgs args)
+    {
+        if (args.Key == "Enter")
+        {
+            await this.AddNodes();
+        }
+    }
+    /// <summary>
+    /// This method is helped to assign the default properties of the node.
+    /// </summary>
+    private void NodeDefaults(IDiagramObject? obj)
+    {
+        Node node= new Node();
+        if(obj!=null)
+            node= obj as Node;
+        if(node!=null && Parent.MindMapPropertyPanel.IsMindMap)
+        {
+            node.Constraints |= NodeConstraints.AllowDrop;
+        }
+        if (node != null && node.AdditionalInfo["Orientation"].ToString() == "Root")
+        {
+            node.ExpandIcon = new DiagramExpandIcon()
+                {
+                    Width = 10,
+                    Height = 10,
+                };
+            node.CollapseIcon = new DiagramCollapseIcon()
+                {
+                    Width = 10,
+                    Height = 10,
+                };
+
+        }
+        else if (node != null && node.AdditionalInfo["Orientation"].ToString() == "Left")
+        {
+            node.ExpandIcon = new DiagramExpandIcon()
+                {
+                    Width = 10,
+                    Height = 10,
+                    OffsetX = 1,
+                    OffsetY = 0.5,
+                };
+            node.CollapseIcon = new DiagramCollapseIcon()
+                {
+                    Width = 10,
+                    Height = 10,
+                    OffsetX = 1,
+                    OffsetY = 0.5,
+                };
+
+        }
+        else if (node != null && node.AdditionalInfo["Orientation"].ToString() == "Right")
+        {
+            node.ExpandIcon = new DiagramExpandIcon()
+                {
+                    Width = 10,
+                    Height = 10,
+                    OffsetX = 0,
+                    OffsetY = 0.5,
+                };
+            node.CollapseIcon = new DiagramCollapseIcon()
+                {
+                    Width = 10,
+                    Height = 10,
+                    OffsetX = 0,
+                    OffsetY = 0.5,
+                };
+
+        }
+
+        PointPort port1 = new PointPort()
+            {
+                ID = "left",
+                Offset = new DiagramPoint() { X = 0, Y = 0.5 },
+                Visibility = PortVisibility.Hidden,
+                Style = new ShapeStyle() { Fill = "blue" }
+            };
+        PointPort port2 = new PointPort()
+            {
+                ID = "right",
+                Offset = new DiagramPoint() { X = 1, Y = 0.5 },
+                Visibility = PortVisibility.Hidden,
+                Style = new ShapeStyle() { Fill = "yellow" }
+            };
+        PointPort port3 = new PointPort()
+            {
+                ID = "top",
+                Offset = new DiagramPoint() { X = 0.5, Y = 0 },
+                Visibility = PortVisibility.Hidden,
+                Style = new ShapeStyle() { Fill = "pink" }
+            };
+        PointPort port4 = new PointPort()
+            {
+                ID = "bottom",
+                Offset = new DiagramPoint() { X = 0.5, Y = 1 },
+                Visibility = PortVisibility.Hidden,
+                Style = new ShapeStyle() { Fill = "green" }
+            };
+        node.Ports = new DiagramObjectCollection<PointPort> { port1, port2, port3, port4 };
+    }
+    /// <summary>
+    /// This method is helped to assign the default properties of the connector.
+    /// </summary>
+    private void ConnectorDefaults(IDiagramObject obj)
+    {
+        Connector connector = new Connector();
+        if(obj !=null)
+            connector = obj as Connector;
+        if (connector != null && Parent.MindMapPropertyPanel.IsMindMap)
+        {
+            connector.Constraints = ConnectorConstraints.Default & ~ConnectorConstraints.Select;
+            connector.BezierConnectorSettings = new BezierConnectorSettings { AllowSegmentsReset = false };
+        }
+    }
+    /// <summary>
+    /// This method is invoked when collapsing the treeview nodes.
+    /// </summary>
+    private void NodeCollapsedHandler(NodeExpandEventArgs args)
+    {
+        args.Cancel = true;
+    }
+    /// <summary>
+    /// This method is invoked when TreeView Node is selected.
+    /// </summary>
+    private void OnSelect(NodeSelectEventArgs args)
+    {
+        this.selectedId = args.NodeData.Id;
+    }
+    /// <summary>
+    /// This method is invoked when edit the TreeView Node.
+    /// </summary>
+    private void NodeEditing(NodeEditEventArgs args)
+    {
+        for (int i = 0; i < Diagram.Nodes.Count; i++)
+        {
+            if (args.NodeData.Id == Diagram.Nodes[i].ID)
+            {
+                Diagram.Nodes[i].Annotations[0].Content = args.NewText;
+                break;
+            }
+        }
+        args.NodeData.Text = args.NewText;
+    }
+    /// <summary>
+    /// This method is invoked when TreeView node is clicked.
+    /// </summary>
+    public void nodeClicked(NodeClickEventArgs args)
+    {
+        selectedId = args.NodeData.Id;
+        selectedNodes = new string[] { args.NodeData.Id };
+        for (int i = 0; i < Parent.DiagramContent.Diagram.Nodes.Count; i++)
+        {
+            if (this.selectedId == Parent.DiagramContent.Diagram.Nodes[i].ID)
+            {
+                Diagram.SelectionSettings.Nodes.Add(Parent.DiagramContent.Diagram.Nodes[i]);
+            }
+        }
+    }
+    /// <summary>
+    /// This method is used to add a treeivew nodes in runtime.
+    /// </summary>
+    async Task AddNodes()
+    {
+        string NodeId = "tree" + this.index.ToString();
+        TreeItem addedNode = new TreeItem()
+            {
+                Id = NodeId,
+                Name = "Node",
+                ParentId = this.selectedId,
+
+            };
+        this.TreeViewNodes.Add(addedNode);
+        selectedNodes = new string[] { NodeId.ToString() };
+        SfDiagramComponent diagram = Parent.DiagramContent.Diagram;
+        DiagramObjectCollection<NodeBase> nodes = new DiagramObjectCollection<NodeBase>();
+        DiagramObjectCollection<NodeBase> connectors = new DiagramObjectCollection<NodeBase>();
+        diagram.BeginUpdate();
+        for (int i = 0; i < Parent.DiagramContent.Diagram.Nodes.Count; i++)
+        {
+            if (this.selectedId == Parent.DiagramContent.Diagram.Nodes[i].ID)
+            {
+                string? orientation = Parent.MindMapPropertyPanel.GetChildOrientation();
+                Node SelectedNode = Parent.DiagramContent.Diagram.Nodes[i];
+                if (SelectedNode !=null && SelectedNode.AdditionalInfo !=null && SelectedNode.ID != "rootNode")
+                {
+                    string? selectedNodeOrientation = Convert.ToString(SelectedNode.AdditionalInfo["Orientation"]);
+                    if(selectedNodeOrientation!=null)
+                        orientation = selectedNodeOrientation;
+                }
+                Dictionary<string, object> MindMapData = new Dictionary<string, object>();
+                diagram.BeginUpdate();
+                if(SelectedNode != null && addedNode !=null)
+                    MindMapData = Parent.MindMapPropertyPanel.GetMindMapShape(SelectedNode, addedNode.Name);
+                Node node = new Node();
+                if(MindMapData !=null)
+                    node = MindMapData["Node"] as Node;
+                if (node != null && node.AdditionalInfo != null)
+                {
+                    Parent.MindMapPropertyPanel.AddMindMapLevels("Level" + Convert.ToString(node.AdditionalInfo["Level"]));
+                    node.ID = NodeId;
+                }
+                if (node != null && node.AdditionalInfo != null)
+                    node.AdditionalInfo["Orientation"] = orientation;
+                else
+                {
+                    if(node!=null)
+                      node.AdditionalInfo.Add("Orientation", orientation);
+                }
+                node.Annotations[0].Content = addedNode.Name;
+                Connector connector = Parent.MindMapPropertyPanel.SetConnectorDefault(diagram, orientation, (MindMapData["Connector"] as Connector), SelectedNode.ID, node.ID);
+                await diagram.AddDiagramElements(new DiagramObjectCollection<NodeBase>() { node, connector });
+                if (Parent.MindMapPropertyPanel.PatternChange)
+                    await Parent.MindMapPropertyPanel.MindmapPatternChange(Parent.MindMapPropertyPanel.PatternValue);
+                Node node1 = diagram.GetObject(node.ID) as Node;
+                await diagram.DoLayout();
+                if(node1!=null)
+                  diagram.Select(new ObservableCollection<IDiagramObject>() { node1 });
+            }
+        }
+        await diagram.EndUpdate();
+        for (int i = 0; i < TreeViewNodes.Count; i++)
+        {
+            if ( TreeViewNodes!=null && this.selectedId == TreeViewNodes[i].Id && TreeViewNodes[i].HasChild == false)
+            {
+                TreeViewNodes[i].Expanded = true;
+                TreeViewNodes[i].HasChild = true;
+                List<string> array = new List<string>();
+                String[] emptystring;
+                array.Add(TreeViewNodes[i].Id.ToString());
+                emptystring = array.ToArray();
+                await Parent.DiagramContent.Dom.ExpandAllAsync(emptystring);
+                break;
+            }
+        }
+        this.index = this.index + 1;
+        // Edit the added node.
+        await this.Dom.BeginEditAsync(NodeId);
+    }
+
+    /// <summary>
+    /// This method is used to remove a treeivew nodes in runtime.
+    /// </summary>
+    private void RemoveNodes()
+    {
+        List<TreeItem> removeNode = Dom.GetTreeData(selectedId);
+        bool hasParent = false;
+        for(int i = 0; i < Diagram.Nodes.Count; i++)
+        {
+            if (selectedId == Diagram.Nodes[i].ID)
+            {
+                Node node = Diagram.Nodes[i];
+                for (int j = node.OutEdges.Count - 1; j >= 0; j--)
+                {
+                    Connector connector = Parent.MindMapPropertyPanel.GetConnector(Diagram.Connectors, node.OutEdges[j]);
+                    Node childNode = Parent.MindMapPropertyPanel.GetNode(Diagram.Nodes, connector.TargetID);
+                    if (childNode != null && childNode.OutEdges.Count > 0)
+                        Parent.MindMapPropertyPanel.RemoveSubChild(childNode, Diagram);
+                    else
+                        Diagram.Nodes.Remove(childNode);
+                }
+                for (int k = node.InEdges.Count - 1; k >= 0; k--)
+                {
+                    Connector connector = Parent.MindMapPropertyPanel.GetConnector(Diagram.Connectors, node.InEdges[k]);
+                    Node childNode = Parent.MindMapPropertyPanel. GetNode(Diagram.Nodes, connector.SourceID);
+                    var index = childNode.OutEdges.IndexOf(connector.ID);
+                    if (childNode.OutEdges.Count > 1 && index == 0)
+                        index = childNode.OutEdges.Count;
+                    if (index > 0)
+                    {
+                        var node1 = childNode.OutEdges[index - 1];
+                        Connector connector1 = Diagram.GetObject(node1) as Connector;
+                        Node node2 = Parent.MindMapPropertyPanel.GetNode(Diagram.Nodes, connector1.TargetID);
+                        Diagram.Select(new ObservableCollection<IDiagramObject>() { node2 });
+                    }
+                    else
+                        Diagram.Select(new ObservableCollection<IDiagramObject>() { childNode });
+                }
+                if (node.ID != "rootNode")
+                    Diagram.Nodes.Remove(node);
+            }
+        }
+        this.TreeViewNodes.Remove(removeNode.ElementAt(0));
+        for (int i = 0; i < Parent.DiagramContent.TreeViewNodes.Count; i++)
+        {
+            if (removeNode[0].ParentId == Parent.DiagramContent.TreeViewNodes[i].ParentId)
+            {
+                hasParent = true;
+                break;
+            }
+        }
+        if (!hasParent)
+        {
+            for (int i = 0; i < TreeViewNodes.Count; i++)
+            {
+                if (removeNode[0].ParentId == Parent.DiagramContent.TreeViewNodes[i].Id)
+                {
+                    Parent.DiagramContent.TreeViewNodes[i].HasChild = false;
+                    Parent.DiagramContent.TreeViewNodes[i].Expanded = false;
+                }
+            }
+        }
+    }
+    /// <summary>
+    /// This method is used to edit a treeivew nodes in runtime.
+    /// </summary>
+    async Task RenameNodes()
+    {
+        await this.Dom.BeginEditAsync(this.selectedId);
+    }
+    /// <summary>
+    /// This method is invoked when tree view context menu item is selected.
+    /// </summary>
+    public async Task MenuSelect(MenuEventArgs<MenuItem> args)
+    {
+        string selectedText;
+        selectedText = args.Item.Text;
+        if (selectedText == "Rename Item")
+        {
+            await this.RenameNodes();
+        }
+        else if (selectedText == "Remove Item")
+        {
+             this.RemoveNodes();
+        }
+        else if (selectedText == "Add New Item")
+        {
+            await this.AddNodes();
+        }
+    }
+    /// <summary>
+    /// This method is triggered when drag and drop the diagram elements.
+    /// </summary>
+    private void Drop(DropEventArgs args)
+    {
+        if (Parent.MindMapPropertyPanel.IsMindMap)
+        {
+            Parent.DiagramContent.Diagram.BeginUpdate();
+            Parent.DiagramContent.Diagram.StartGroupAction();
+            Parent.MindMapPropertyPanel.Drop(args);
+            Parent.DiagramContent.Diagram.EndGroupAction();
+            _ = Parent.DiagramContent.Diagram.EndUpdate();
+        }
+    }
+    /// <summary>
+    /// This method is triggered when select or deselect any objects from the diagram. .
+    /// </summary>
+    private void SelectionChanged(Syncfusion.Blazor.Diagram.SelectionChangedEventArgs args)
+    {
+        bool hasContinuousDraw = Diagram.InteractionController.HasFlag(DiagramInteractions.ContinuousDraw);
+        if ((!hasContinuousDraw) || (hasContinuousDraw && Diagram.DrawingObject != null && args.NewValue.Count > 0))
+        {
+            Parent.Toolbar.EnableToolbarItems(args.NewValue, "selectionchange");
+            int ObjectsLength = Diagram.SelectionSettings.Nodes.Count + Diagram.SelectionSettings.Connectors.Count;
+            if (ObjectsLength > 1 && (Diagram.SelectionSettings.Nodes.Count > 0 || (Diagram.SelectionSettings.Connectors.Count > 0)))
+            {
+                diagramSelected = false;
+                this.MultipleSelectionSettings(args.NewValue);
+            }
+            else if (ObjectsLength == 1 && (Diagram.SelectionSettings.Nodes.Count == 1 || Diagram.SelectionSettings.Connectors.Count == 1))
+            {
+                 Parent.MindMapPropertyPanel.bindMindMapProperties();
+                if (args.NewValue[0] is Node && (args.NewValue[0] as Node).AdditionalInfo != null && (args.NewValue[0] as Node).AdditionalInfo.Count > 0)
+                {
+                    string layoutType = Convert.ToString((args.NewValue[0] as Node).AdditionalInfo["Orientation"]);
+                    if (layoutType == "Root")
+                    {
+                        Diagram.SelectionSettings.UserHandles[0].Visible = false;
+                        Diagram.SelectionSettings.UserHandles[1].Visible = false;
+                        Diagram.SelectionSettings.UserHandles[2].Visible = true;
+                        Diagram.SelectionSettings.UserHandles[3].Visible = true;
+                    }
+                    else if (layoutType == "Left")
+                    {
+                        Diagram.SelectionSettings.UserHandles[0].Visible = false;
+                        Diagram.SelectionSettings.UserHandles[1].Visible = true;
+                        Diagram.SelectionSettings.UserHandles[2].Visible = true;
+                        Diagram.SelectionSettings.UserHandles[3].Visible = false;
+                    }
+                    else if (layoutType == "Right")
+                    {
+                        Diagram.SelectionSettings.UserHandles[0].Visible = true;
+                        Diagram.SelectionSettings.UserHandles[1].Visible = false;
+                        Diagram.SelectionSettings.UserHandles[2].Visible = false;
+                        Diagram.SelectionSettings.UserHandles[3].Visible = true;
+                    }
+                }
+                diagramSelected = false;
+                Parent.Toolbar.SingleSelectionToolbarItems();
+            }
+            else
+            {
+                diagramSelected = true;
+                Parent.Toolbar.DiagramSelectionToolbarItems();
+            }
+            StateHasChanged();
+        }
+    }
+    /// <summary>
+    /// This method is used to enable the toolbar items in diagram interaction.
+    /// </summary>
+    private void HistoryChange(HistoryChangedEventArgs args)
+    {
+        Parent.Toolbar.EnableToolbarItems(new object() { }, "historychange");
+    }
+    /// <summary>
+    /// This method is invoked when the history is changed.
+    /// </summary>
+    private void HistoryAdd(HistoryAddingEventArgs args)
+    {
+        if (Parent.MenuBar.IsNewClick)
+        {
+            args.Cancel = true;
+        }
+        if((args.Entry as HistoryEntryBase).Type == HistoryEntryType.CollectionChanged)
+        {
+            args.Cancel = true;
+        }
+    }
+    /// <summary>
+    /// This method is invoked when the scroller is changed.
+    /// </summary>
+    private void ScrollChanged(ScrollChangedEventArgs args)
+    {
+        if((Parent.DiagramContent.CurrentZoom >= 0.25 && Parent.DiagramContent.CurrentZoom <= 30) && Parent.Toolbar.ZoomItemDropdownContent != FormattableString.Invariant($"{Math.Round(Parent.DiagramContent.CurrentZoom * 100)}") + "%")
+        {
+            Parent.Toolbar.DiagramZoomValueChange();
+        }
+    }
+    /// <summary>
+    /// This method is used to enable the tool bar items in multiple selection.
+    /// </summary>
+    private void MultipleSelectionSettings(ObservableCollection<IDiagramObject> SelectedItems)
+    {
+        Parent.Toolbar.MutipleSelectionToolbarItems();
+    }
+    /// <summary>
+    /// This method is used to allows users to pan the diagram.
+    /// </summary>
+    public void UpdateTool()
+    {
+        diagramTool = DiagramInteractions.ZoomPan;
+        StateHasChanged();
+    }
+    /// <summary>
+    /// This method is used to allows users to perform selection in the diagram.
+    /// </summary>
+    public void UpdatePointerTool()
+    {
+        diagramTool = DiagramInteractions.SingleSelect;
+        StateHasChanged();
+    }
+    /// <summary>
+    /// This method is used to perform Zoomin/Zoomout the diagram.
+    /// </summary>
+    public void ZoomTo(ZoomOptions options)
+    {
+        double factor = options.ZoomFactor != 0 ? options.ZoomFactor : 0.2;
+        factor = options.Type == "ZoomOut" ? 1 / (1 + factor) : (1 + factor);
+        Diagram.Zoom(factor, null);
+    }
+    /// <summary>
+    /// Represents the zoom option in a diagram.
+    /// </summary>
+    public class ZoomOptions
+    {
+        public double ZoomFactor { get; set; }
+        public string Type { get; set; }
+    }
+    /// <summary>
+    /// This method is used to refresh the mind map showcase sample.
+    /// </summary>
+    public void StateChanged()
+    {
+        StateHasChanged();
+    }
+    /// <summary>
+    /// This method is used to update the horizontal and vertical spacing of layout.
+    /// </summary>
+    public async Task UpdateSpacing(int value, string type)
+    {
+        SfDiagramComponent diagram = Parent.DiagramContent.Diagram;
+        diagram.BeginUpdate();
+        if (type == "Horizontal")
+            HorizontalSpacing = value;
+        else if (type == "Vertical")
+            VerticalSpacing = value;
+        await diagram.EndUpdate();
+    }
+    /// <summary>
+    /// This method to determine whether this command can execute or not.
+    /// </summary>
+    public void CanExecute(CommandKeyArgs args)
+    {
+        args.CanExecute = true;
+    }
+    /// <summary>
+    /// This Method to execute the custom command.
+    /// </summary>
+    public async Task ExecuteCommand(CommandKeyArgs obj)
+    {
+
+        if(obj.Name == "leftChild")
+        {
+            Parent.MindMapPropertyPanel.AddNode("Left");
+        }
+        if(obj.Name == "rightChild")
+        {
+            Parent.MindMapPropertyPanel.AddNode("Right");
+        }
+        if (obj.Name == "sibilingChildTop")
+        {
+            Parent.MindMapPropertyPanel.AddSiblingChild("Top");
+        }
+        if (obj.Name == "sibilingChildBottom")
+        {
+            Parent.MindMapPropertyPanel.AddSiblingChild("Bottom");
+        }
+        if (obj.Name == "deleteChid" || obj.Name == "delete" || obj.Name == "backspace")
+        {
+            Parent.MindMapPropertyPanel.RemoveChild();
+        }
+        if (obj.Name == "editing")
+        {
+            Parent.MindMapPropertyPanel.EditNode();
+        }
+        if (obj.Name == "bold")
+        {
+            Parent.MindMapPropertyPanel.TextBold();
+        }
+        if (obj.Name == "italic")
+        {
+            Parent.MindMapPropertyPanel.TextItalic();
+        }
+        if (obj.Name == "underline")
+        {
+            Parent.MindMapPropertyPanel.TextUnderline();
+        }
+        if (obj.Name == "fitPage")
+        {
+            Parent.MindMapPropertyPanel.FitPage();
+        }
+        if (obj.Name == "showShortCut")
+        {
+            Parent.ShowHideShortcutKey();
+        }
+        if (obj.Name == "cutObject")
+        {
+            _= Parent.MindMapPropertyPanel.CutLayout();
+        }
+        if (obj.Name == "copyObject")
+        {
+            Parent.MindMapPropertyPanel.CopyLayout();
+        }
+        if (obj.Name == "pasteObject")
+        {
+            await Parent.MindMapPropertyPanel.PasteLayout();
+        }
+        if (obj.Name == "navigationDown")
+        {
+            Parent.MindMapPropertyPanel.NavigateChild("Bottom");
+        }
+        if (obj.Name == "navigationUp")
+        {
+            Parent.MindMapPropertyPanel.NavigateChild("Top");
+        }
+        if (obj.Name == "navigationLeft")
+        {
+            Parent.MindMapPropertyPanel.NavigateChild("Right");
+        }
+        if (obj.Name == "navigationRight")
+        {
+            Parent.MindMapPropertyPanel.NavigateChild("Left");
+        }
+        if (obj.Name == "undo")
+        {
+            Parent.MindMapPropertyPanel.UndoRedoLayout(true);
+        }
+        if (obj.Name == "redo")
+        {
+            Parent.MindMapPropertyPanel.UndoRedoLayout(false);
+        }
+        if (obj.Name == "fileNew")
+        {
+            if(jsRuntime!=null)
+                await jsRuntime.InvokeVoidAsync("CommonKeyboardCommands_newDiagram");
+        }
+        if (obj.Name == "fileOpen")
+        {
+            await Parent.MenuBar.OpenUploadBox(true, ".json");
+        }
+        if (obj.Name == "fileSave")
+        {
+            if (jsRuntime != null)
+            {
+                string fileName = await jsRuntime.InvokeAsync<string>("getDiagramFileName", "");
+                await Parent.MenuBar.Download(fileName);
+            }
+        }
+    }
+    /// <summary>
+    /// This Method to get the branch type of the nodes.
+    /// </summary>
+    private BranchType getbranch(IDiagramObject obj)
+    {
+        return Parent.MindMapPropertyPanel.GetBranchType(obj);
+    }
+    /// <summary>
+    /// This method is used to configure every subtree of the layout.
+    /// </summary>
+    private TreeInfo getLayoutInfo(IDiagramObject obj, TreeInfo options)
+    {
+        return options;     
+    }
+    /// <summary>
+    /// This method is used to customize the interaction tool.
+    /// </summary>
+    public InteractionControllerBase GetCustomTool(DiagramElementAction action, string id)
+    {
+        InteractionControllerBase tool = null;
+        if (id == "AddLeft")
+        {
+            tool = new AddRightTool(Parent.DiagramContent.Diagram, Parent);
+        }
+        else if (id == "AddRight")
+        {
+            tool = new AddLeftTool(Parent.DiagramContent.Diagram, Parent);
+        }
+        else
+        {
+            tool = new DeleteTool(Parent.DiagramContent.Diagram, Parent);
+        }
+        return tool;
+    }
+    /// <summary>
+    /// Represents the "AddRight" tool for a diagram elements.
+    /// This tool enables the user to add a new node to the right of the selected node.
+    /// </summary>
+    public class AddRightTool : InteractionControllerBase
+    {
+        SfDiagramComponent diagram;
+        DiagramMain parent;
+        public AddRightTool(SfDiagramComponent Diagram, DiagramMain Parent) : base(Diagram)
+        {
+            diagram = Diagram;
+            parent = Parent;
+        }
+        public override void OnMouseDown(DiagramMouseEventArgs args)
+        {
+            parent.DiagramContent.AddRemoveChildNode("Right");
+        }
+    }
+    /// <summary>
+    /// Represents the "AddLeft" tool for a diagram elements.
+    /// This tool enables the user to add a new node to the left of the selected node.
+    /// </summary>
+    public class AddLeftTool : InteractionControllerBase
+    {
+        SfDiagramComponent diagram;
+        DiagramMain parent;
+        public AddLeftTool(SfDiagramComponent Diagram, DiagramMain Parent) : base(Diagram)
+        {
+            diagram = Diagram;
+            parent = Parent;
+        }
+        public override void OnMouseDown(DiagramMouseEventArgs args)
+        {
+            parent.DiagramContent.AddRemoveChildNode("Left");
+        }
+    }
+    /// <summary>
+    /// This tool enables the user to delete a selected node.
+    /// </summary>
+    public class DeleteTool : InteractionControllerBase
+    {
+        SfDiagramComponent diagram;
+        DiagramMain parent;
+        Node deleteObject = null;
+
+        public DeleteTool(SfDiagramComponent Diagram, DiagramMain Parent) : base(Diagram)
+        {
+            diagram = Diagram;
+            parent = Parent;
+        }
+        public override void OnMouseDown(DiagramMouseEventArgs args)
+        {
+            deleteObject = (diagram.SelectionSettings.Nodes[0]) as Node;
+        }
+        public override void OnMouseUp(DiagramMouseEventArgs args)
+        {
+            if (deleteObject != null)
+            {
+                parent.DiagramContent.AddRemoveChildNode("Delete");
+            }
+            base.OnMouseUp(args);
+            this.InAction = true;
+        }
+    }
+    /// <summary>
+    /// This method is used to add/remove the node using userhandle.
+    /// </summary>
+    private void AddRemoveChildNode(string type)
+    {
+        if(type == "Left" || type == "Right")
+            Parent.MindMapPropertyPanel.AddNode(type);
+        else
+            Parent.MindMapPropertyPanel.RemoveChild();
+    }
+    /// <summary>
+    /// This method is used to create a separate id for added nodes in diagram.
+    /// </summary>
+
+    public string RandomId()
+    {
+        Random random = new Random();
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
+#pragma warning disable CA5394 // Do not use insecure randomness
+        return new string(Enumerable.Repeat(chars, 5)
+          .Select(s => s[random.Next(s.Length)]).ToArray());
+#pragma warning restore CA5394 // Do not use insecure randomness
+    }
+    /// <summary>
+    /// This method is triggered when the diagram component is triggered.
+    /// </summary>
+    private void Created(object args)
+    {
+        Diagram.Select(new ObservableCollection<IDiagramObject>() { Diagram.Nodes[0] });
+        Parent.Toolbar.MindmapToolbarVisibility = "block";
+        Parent.Toolbar.StateChanged();
+    }
+    /// <summary>
+    /// This method is triggered when change the annotation for the diagram element.
+    /// </summary>
+    private async void TextChanged(TextChangeEventArgs args)
+    {
+        if((!string.IsNullOrEmpty(args.OldValue) || string.IsNullOrWhiteSpace(args.OldValue)) && args.NewValue.Length > 0 && args.Element != null)
+        {
+            await Task.Delay(1);
+            Node node = args.Element is Node ? args.Element as Node : null;
+            Connector connector = args.Element is Connector ? args.Element as Connector : null;
+            if ((node != null && node.Annotations != null && node.Annotations.Count > 0 && (node.Annotations[0].Content != "" || (node.Annotations[0].Hyperlink != null && (node.Annotations[0].Hyperlink.Url != "" || node.Annotations[0].Hyperlink.Content != "")))) || ((connector != null && connector.Annotations != null && connector.Annotations.Count > 0 && connector.Annotations[0].Content != string.Empty)))
+            {
+                if (node != null && node.Annotations[0].Hyperlink != null)
+                {
+                    HyperlinkSettings hyperlink = node.Annotations[0].Hyperlink;
+                    node.Annotations[0].Hyperlink = new HyperlinkSettings() { Content = !string.IsNullOrEmpty(hyperlink.Content) ? node.Annotations[0].Content : string.Empty, Url = hyperlink.Content != "" ? hyperlink.Url : node.Annotations[0].Content };
+                }
+                StateChanged();
+            }
+        }
+        if (args.Element is Node)
+        {
+            for (int i = 0; i < TreeViewNodes.Count; i++)
+            {
+                if ((args.Element as Node).ID == TreeViewNodes[i].Id)
+                {
+                    TreeViewNodes[i].Name = args.NewValue;
+                }
+            }
+        }
+    }
+    /// <summary>
+    /// This method is triggered when node/connector is added or removed from the diagram.
+    /// </summary>
+    private async void CollectionChanged(CollectionChangedEventArgs args)
+    {
+
+        if (Parent.MindMapPropertyPanel.IsMindMap)
+        {
+            if(args.Element is Node)
+            {
+                if((args.Element).AdditionalInfo != null && (args.Element).AdditionalInfo.Count > 0)
+                {
+                    if(args.Element.AdditionalInfo.ContainsKey("IsFirstNode") )
+                    {
+                        bool firstNode = (bool)args.Element.AdditionalInfo["IsFirstNode"];
+                        if(firstNode)
+                            Parent.MindMapPropertyPanel.PastedFirstItem = args.Element as Node;
+                    }
+                }
+            }
+        }
+        else if(args.Action == CollectionChangedAction.Remove)
+        {
+            diagramSelected = true;
+            Parent.Toolbar.DiagramSelectionToolbarItems();
+            StateHasChanged();
+        }
+        if(Parent.MindMapPropertyPanel.OnExpandable)
+            await Parent.MindMapPropertyPanel.OnExpandableChange();
+    }
+#pragma warning restore BL0005
+}

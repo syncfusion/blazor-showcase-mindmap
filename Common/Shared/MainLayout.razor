@@ -1,0 +1,44 @@
+﻿@inherits LayoutComponentBase
+@inject SampleService Service
+@inject IJSRuntime JsRuntime;
+@inject SyncfusionBlazorService SyncfusionBlazorService;
+@using Syncfusion.Blazor;
+@using MindMap;
+@using MindMap.Shared
+@inject Microsoft.AspNetCore.Components.NavigationManager UriHelper;
+@namespace MindMap.Shared
+<Syncfusion.Blazor.Popups.SfDialogProvider />
+<DiagramMain @ref="DiagramMain"></DiagramMain>
+
+@code{
+    [Inject]
+    SyncfusionBlazorService SyncfusionService { get; set; }
+
+    public DiagramMain DiagramMain { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender)
+        {
+            if (this.DiagramMain != null)
+                this.DiagramMain.Parent = this;
+        }
+        if (UriHelper.Uri.IndexOf("material") > 0)
+        {
+
+            SyncfusionService.EnableRipple(); ;
+        }
+        else
+        {
+            SyncfusionService.EnableRipple(); ;
+        }
+        
+    }
+    
+}

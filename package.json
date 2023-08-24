@@ -1,0 +1,26 @@
+{
+	"name": "diagram-builder",
+	"version": "1.0.0",
+	"description": "Blazor Showcase Samples - DiagramBuilder",
+	"author": "Syncfusion Inc.",
+	"license": "SEE LICENSE IN license",
+	"keywords": [
+		"blazor-diagram-builder",
+		"diagram-builder",
+		"diagrambuilder"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/essential-studio/ej2-blazor-diagram-builder.git"
+	},
+	"devDependencies": {
+		"json-beautify": "^1.0.1",
+		"elasticlunr": "0.9.5",
+		"glob": "^7.1.2",
+		"gulp": "^4.0.2",
+		"gulp-dotnet-cli": "^1.0.2",
+		"require-dir": "^0.3.2",
+		"shelljs": "^0.7.0",
+		"simple-git": "^1.43.0"
+	}
+}
