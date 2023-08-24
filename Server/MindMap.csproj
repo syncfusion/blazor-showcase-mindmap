@@ -26,10 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Remove="NuGet.config" />
-  </ItemGroup>
-
-  <ItemGroup>
    
   
   

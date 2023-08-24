@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MindMap", "MindMap.csproj",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorServerCommon_NET6", "..\Common\BlazorServerCommon_NET6.csproj", "{C31BC2EA-8906-490C-99BE-C4FFAC3D20E7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Syncfusion.Blazor", "..\..\DiagramBuilder\ej2-blazor-source\Syncfusion.Blazor\Syncfusion.Blazor.csproj", "{FF41532D-4646-4962-85ED-AB7DE91C96A9}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{C31BC2EA-8906-490C-99BE-C4FFAC3D20E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C31BC2EA-8906-490C-99BE-C4FFAC3D20E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C31BC2EA-8906-490C-99BE-C4FFAC3D20E7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FF41532D-4646-4962-85ED-AB7DE91C96A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FF41532D-4646-4962-85ED-AB7DE91C96A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FF41532D-4646-4962-85ED-AB7DE91C96A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FF41532D-4646-4962-85ED-AB7DE91C96A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
