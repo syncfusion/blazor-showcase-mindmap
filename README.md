@@ -15,3 +15,8 @@ The samples require the following requirements to run.
 * Open the project in Visual Studio 2022.
 * Run the demo.
 
+## Demo
+
+### <a href="https://blazor.syncfusion.com/showcase/diagrambuilder/" target="_blank">https://blazor.syncfusion.com/showcase/diagrambuilder/</a>
+
+Check all the showcase samples from <a href="https://blazor.syncfusion.com" target="_blank">here</a>.
