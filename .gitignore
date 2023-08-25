@@ -1,0 +1,8 @@
+Server/MindMap/bin
+Server/MindMap/obj
+WASM/MindMap//bin
+WASM/MindMap//obj
+Common/BlazorServerCommon_NET6/bin
+Common/BlazorWasmCommon_NET6/obj
+.vs/
+.git/
