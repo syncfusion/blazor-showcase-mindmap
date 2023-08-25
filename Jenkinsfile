@@ -1,6 +1,6 @@
 #!groovy
 
-node(isProtectedBranch() ? 'BlazorComponent' : 'BlazorComponents') {
+node('AspComponent') {
     try {
         deleteDir();
         stage('Import') {
@@ -35,8 +35,4 @@ node(isProtectedBranch() ? 'BlazorComponent' : 'BlazorComponents') {
         blazor.throwError(e);
         deleteDir();
     }
-}
-
-def isProtectedBranch() {
-    return env.BRANCH_NAME == env.STAGING_BRANCH || env.BRANCH_NAME.startsWith('hotfix/') || env.BRANCH_NAME.startsWith('release/');
 }
