@@ -17,6 +17,7 @@ The samples require the following requirements to run.
 
 ## Demo
 
-### <a href="https://blazor.syncfusion.com/showcase/diagrambuilder/" target="_blank">https://blazor.syncfusion.com/showcase/diagrambuilder/</a>
+### Server -  <a href="https://blazor.syncfusion.com/showcase/mind-map/" target="_blank">https://blazor.syncfusion.com/showcase/mind-map/</a>
+### WebAssembly  - <a href="https://blazor.syncfusion.com/showcase/wasm/mind-map/" target="_blank">https://blazor.syncfusion.com/showcase/wasm/mind-map/</a>
 
 Check all the showcase samples from <a href="https://blazor.syncfusion.com" target="_blank">here</a>.
