@@ -7,7 +7,7 @@ Mind mapping is a high effective way to brainstorm and organize your thoughts or
 The samples require the following requirements to run.
 
 * [Visual Studio 2022](https://visualstudio.microsoft.com/vs/)
-* [.NET 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
+* [.NET 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 
 ### Run
 

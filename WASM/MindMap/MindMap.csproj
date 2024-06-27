@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>$(DefineConstants)TRACE;WASM</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>$(DefineConstants)TRACE;WASM</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Shared\**" />
+    <Content Remove="Shared\**" />
+    <EmbeddedResource Remove="Shared\**" />
+    <None Remove="Shared\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.6" PrivateAssets="all" />
+  </ItemGroup>
+	
+    <ItemGroup>
+    <Compile Remove="Pages\DiagramOpenDialog.cs" />
+  </ItemGroup>
+	
+    <ItemGroup>
+      <None Include="wwwroot\assets\db-icons1\Fonts\All icons Metrop.svg" />
+      <None Include="wwwroot\assets\db-icons1\Fonts\Diagram Builder Font Icon.svg" />
+      <None Include="wwwroot\assets\db-icons1\Fonts\Final diagram icons copy.svg" />
+      <None Include="wwwroot\assets\db-icons1\Fonts\New_DiagramBuilder_Font.svg" />
+    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
+	<PackageReference Include="Markdig" Version="0.23.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\common\BlazorWasmCommon_NET6.csproj" />
+  </ItemGroup>
+
+</Project>
