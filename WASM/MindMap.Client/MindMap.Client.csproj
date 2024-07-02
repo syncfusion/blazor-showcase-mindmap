@@ -19,8 +19,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\common\BlazorWasmCommon_NET8.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\common\BlazorWasmCommon_NET8.csproj" />
+	</ItemGroup>
 
 </Project>
