@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
@@ -26,35 +26,20 @@
   </ItemGroup>
 
   <ItemGroup>
-   
-  
-  
-    <None Include="wwwroot\assets\dbstyle\common_images\linestyle\0,0.svg" />
-   
-  
-  
-    <None Include="wwwroot\assets\dbstyle\common_images\linestyle\1,2.svg" />
-   
-  
-  
-    <None Include="wwwroot\assets\dbstyle\common_images\linestyle\3,3.svg" />
-   
-  
-  
-    <None Include="wwwroot\assets\dbstyle\common_images\linestyle\4,4,1.svg" />
-   
-  
-  
-    <None Include="wwwroot\assets\dbstyle\common_images\linestyle\5,3.svg" />
-
-    <None Include="wwwroot\assets\dbstyle\mindmap_images\Mind_Map0.svg" />
-    <None Include="wwwroot\assets\dbstyle\mindmap_images\Mind_Map1.svg" />
-    <None Include="wwwroot\assets\dbstyle\mindmap_images\Mind_Map2.svg" />
-    <None Include="wwwroot\assets\dbstyle\mindmap_images\Mind_Map3.svg" />
+	<None Include="wwwroot\assets\dbstyle\common_images\linestyle\0,0.svg" />
+	<None Include="wwwroot\assets\dbstyle\common_images\linestyle\1,2.svg" />
+	<None Include="wwwroot\assets\dbstyle\common_images\linestyle\3,3.svg" />
+	<None Include="wwwroot\assets\dbstyle\common_images\linestyle\4,4,1.svg" />
+	<None Include="wwwroot\assets\dbstyle\common_images\linestyle\5,3.svg" />
+	<None Include="wwwroot\assets\dbstyle\mindmap_images\Mind_Map0.svg" />
+	<None Include="wwwroot\assets\dbstyle\mindmap_images\Mind_Map1.svg" />
+	<None Include="wwwroot\assets\dbstyle\mindmap_images\Mind_Map2.svg" />
+	<None Include="wwwroot\assets\dbstyle\mindmap_images\Mind_Map3.svg" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common\BlazorServerCommon_NET6.csproj" />
+    <ProjectReference Include="..\Common\BlazorServerCommon_NET8.csproj" />
   </ItemGroup>
+
 
 </Project>

@@ -1,30 +1,55 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using MindMap.Components;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
+using Syncfusion.Blazor;
+using Syncfusion.Blazor.Popups;
+using MindMap.Shared;
 
-namespace MindMap
-{
-#pragma warning disable CA1052 // Static holder types should be Static or NotInheritable
-    public class Program
-#pragma warning restore CA1052 // Static holder types should be Static or NotInheritable
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
+builder.Services.AddSignalR(e =>
     {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
-
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
+        e.MaximumReceiveMessageSize = 102400000;
+    });
+builder.Services.AddScoped<SfDialogService>();
+builder.Services.AddServerSideBlazor();
+builder.Services.AddSyncfusionBlazor();
+builder.Services.AddScoped<SampleService>();
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+            {
+                // Define the list of cultures your app will support
+                List<CultureInfo> supportedCultures = new List<CultureInfo>()
                 {
-                    webBuilder.UseStartup<Startup>();
-                });
-    }
+                    new CultureInfo("en-US"),
+                    new CultureInfo("de"),
+                    new CultureInfo("fr"),
+                    new CultureInfo("ar"),
+                    new CultureInfo("zh"),
+                };
+                // Set the default culture
+                options.DefaultRequestCulture = new RequestCulture("en-US");
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+            });
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
 }
+
+app.UseHttpsRedirection();
+
+app.UseStaticFiles();
+app.UseAntiforgery();
+
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
+
+app.Run();

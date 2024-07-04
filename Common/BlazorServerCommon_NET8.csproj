@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
@@ -22,8 +22,8 @@
     <None Include="Shared\MainLayout.razor" />
     <None Include="wwwroot\interop.js" />
   </ItemGroup>
-   <ItemGroup>
-    <PackageReference Include="Syncfusion.Blazor" Version="*" />
+  <ItemGroup>
+    <PackageReference Include="Syncfusion.Blazor" Version="26.1.35" />
   </ItemGroup>
   
   

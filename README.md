@@ -7,17 +7,19 @@ Mind mapping is a high effective way to brainstorm and organize your thoughts or
 The samples require the following requirements to run.
 
 * [Visual Studio 2022](https://visualstudio.microsoft.com/vs/)
-* [.NET 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
+* [.NET 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 
 ### Run
 
-* Clone this repository.
-* Open the project in Visual Studio 2022.
-* Run the demo.
+1. Clone this repository.
+2. Open the project in VS 2022:
+	- For the .NET 8 Server app, open Server/MindMap.sln.
+	- For the .NET 8 WASM app, open WASM/MindMap.sln.
+3. Run the demo.
 
 ## Demo
 
-### Server -  <a href="https://blazor.syncfusion.com/showcase/mind-map/" target="_blank">https://blazor.syncfusion.com/showcase/mind-map/</a>
-### WebAssembly  - <a href="https://blazor.syncfusion.com/showcase/wasm/mind-map/" target="_blank">https://blazor.syncfusion.com/showcase/wasm/mind-map/</a>
+### Server App -  <a href="https://blazor.syncfusion.com/showcase/mind-map/" target="_blank">https://blazor.syncfusion.com/showcase/mind-map/</a>
+### WebAssembly - <a href="https://blazor.syncfusion.com/showcase/wasm/mind-map/" target="_blank">https://blazor.syncfusion.com/showcase/wasm/mind-map/</a>
 
 Check all the showcase samples from <a href="https://blazor.syncfusion.com" target="_blank">here</a>.

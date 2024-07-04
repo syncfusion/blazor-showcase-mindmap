@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
+    <StaticWebAssetProjectMode>Default</StaticWebAssetProjectMode>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<Compile Remove="Shared\**" />
+	<Content Remove="Shared\**" />
+	<EmbeddedResource Remove="Shared\**" />
+	<None Remove="Shared\**" />
+  </ItemGroup>
+
+	<ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0" />
+  </ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\common\BlazorWasmCommon_NET8.csproj" />
+	</ItemGroup>
+
+</Project>
