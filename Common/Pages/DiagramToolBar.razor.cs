@@ -324,7 +324,7 @@ namespace MindMap
                                 Parent.DiagramContent.Diagram.BeginUpdate();
                                 Parent.DiagramContent.Diagram.Width = dataObj.Width + "px";
                                 Parent.DiagramContent.Diagram.Height = dataObj.Height + "px";
-                                await Parent.DiagramContent.Diagram.EndUpdate();
+                                await Parent.DiagramContent.Diagram.EndUpdateAsync();
                             }
                         }
 
