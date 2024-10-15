@@ -582,7 +582,7 @@
                 Diagram.Nodes[i].CollapseIcon.Shape = OnExpandable ? DiagramCollapseIcons.Plus : DiagramCollapseIcons.None;
             }
             Diagram.EndGroupAction();
-            await Diagram.DoLayoutAsync();
+            await Diagram.DoLayout();
         }
         Parent.MindMapPropertyPanel.StateHasChanged();
         Parent.DiagramContent.StateChanged();
@@ -637,7 +637,7 @@
     {
         Parent.DiagramContent.Diagram.BeginUpdate();
         await MindmapPatternChange("pattern3");
-        await Parent.DiagramContent.Diagram.EndUpdateAsync();
+        await Parent.DiagramContent.Diagram.EndUpdate();
         PatternValue = "pattern3";
         PatternChange = true;
         bindMindMapProperties(GetNodeForPropertyChange());
@@ -762,7 +762,7 @@
             }
         }
         Diagram.EndGroupAction();
-        await Diagram.DoLayoutAsync();
+        await Diagram.DoLayout();
     }
     #endregion
      /// <summary>
@@ -821,7 +821,7 @@
             }
         }
         Diagram.EndGroupAction();
-        await Diagram.EndUpdateAsync();
+        await Diagram.EndUpdate();
     }
     #endregion
     /// <summary>
@@ -1205,17 +1205,17 @@
             else
                 node.AdditionalInfo.Add("Orientation", orientation);
             Connector connector = SetConnectorDefault(diagram, orientation, (MindMapData["Connector"] as Connector), SelectedNode.ID, node.ID);
-            await diagram.AddDiagramElementsAsync(new DiagramObjectCollection<NodeBase>() { node, connector });
+            await diagram.AddDiagramElements(new DiagramObjectCollection<NodeBase>() { node, connector });
             if (PatternChange)
                 await MindmapPatternChange(PatternValue);
             Node node1 = diagram.GetObject(node.ID) as Node;
-            await diagram.DoLayoutAsync();
-            await diagram.EndUpdateAsync();
+            await diagram.DoLayout();
+            await diagram.EndUpdate();
             DiagramRect bound = new DiagramRect((node1.OffsetX - (node1.Width / 2)), node1.OffsetY - (node1.Height / 2), node1.Width, node1.Height);
             diagram.BeginUpdate();
             diagram.Select(new ObservableCollection<IDiagramObject>() { node1 });
             diagram.StartTextEdit(node1);
-            await diagram.EndUpdateAsync();
+            await diagram.EndUpdate();
             diagram.Constraints = DiagramConstraints.Default;
             for (int i = 0; i < Parent.DiagramContent.TreeViewNodes.Count; i++)
             {
@@ -1392,7 +1392,7 @@
             else
                 node.AdditionalInfo.Add("Orientation", orientation);
             Connector connector = SetConnectorDefault(diagram, orientation, (MindMapData["Connector"] as Connector), childConnector.SourceID, node.ID);
-            await diagram.AddDiagramElementsAsync(new DiagramObjectCollection<NodeBase>() { node, connector });
+            await diagram.AddDiagramElements(new DiagramObjectCollection<NodeBase>() { node, connector });
             if (PatternChange)
                 MindmapPatternChange(PatternValue);
             Node node1 = GetNode(diagram.Nodes, node.ID);
@@ -1411,12 +1411,12 @@
                     Parent.DiagramContent.TreeViewNodes.Add(Addednode);
                 }
             }
-            await diagram.DoLayoutAsync();
-            await diagram.EndUpdateAsync();
+            await diagram.DoLayout();
+            await diagram.EndUpdate();
             diagram.BeginUpdate();
             diagram.Select(new ObservableCollection<IDiagramObject>() { node1 });
             diagram.StartTextEdit(node1);
-            await diagram.EndUpdateAsync();
+            await diagram.EndUpdate();
             diagram.Constraints = DiagramConstraints.Default;
 
         }
@@ -1459,8 +1459,8 @@
         {
             diagram.BeginUpdate();
             RemoveSubChild(diagram.SelectionSettings.Nodes[0], diagram);
-            await diagram.EndUpdateAsync();
-            await diagram.DoLayoutAsync();
+            await diagram.EndUpdate();
+            await diagram.DoLayout();
         }
     }
     /// <summary>
@@ -1539,7 +1539,7 @@
             Node node = diagram.SelectionSettings.Nodes[0];
             diagram.StartTextEdit(node);
         }
-        await diagram.EndUpdateAsync();
+        await diagram.EndUpdate();
     }
     /// <summary>
     /// This method is used to update the selected node's text in bold in style
@@ -1706,7 +1706,7 @@
         {
             CopyLayout();
             RemoveChild();
-            await diagram.DoLayoutAsync();
+            await diagram.DoLayout();
         }
     }
     /// <summary>
@@ -1757,7 +1757,7 @@
                 else
                     newElements = UpdateClonedNode(copy as Node, objectTable, keyTable, newElements);
             }
-            await diagram.AddDiagramElementsAsync(newElements);
+            await diagram.AddDiagramElements(newElements);
             if (selectedNode.ID != "rootNode")
                 selecteditemOrientation = Convert.ToString(selectedNode.AdditionalInfo["Orientation"]);
             else
@@ -1765,15 +1765,15 @@
             selectedelement = PastedFirstItem;
             MindMapData = GetMindMapShape(selectedNode);
             Connector connector = SetConnectorDefault(diagram, selecteditemOrientation, (MindMapData["Connector"] as Connector), selectedNode.ID, selectedelement.ID);
-            await diagram.AddDiagramElementsAsync(new DiagramObjectCollection<NodeBase>() { connector });
+            await diagram.AddDiagramElements(new DiagramObjectCollection<NodeBase>() { connector });
             string newLevel = Convert.ToString(selectedNode.AdditionalInfo["Level"]);
             int selectedNodeLevel = 0;
             selectedNodeLevel = int.Parse(newLevel);
             UpdateLevel(selectedelement, selectedNodeLevel, selecteditemOrientation);
-            await diagram.DoLayoutAsync();
+            await diagram.DoLayout();
             diagram.EndGroupAction();
             diagram.Select(new ObservableCollection<IDiagramObject>() { selectedelement });
-            await diagram.EndUpdateAsync();
+            await diagram.EndUpdate();
             Node viewNode = diagram.Nodes[diagram.Nodes.Count - 1];
             DiagramRect bound = new DiagramRect((viewNode.OffsetX - (viewNode.Width / 2)), viewNode.OffsetY - (viewNode.Height / 2), viewNode.Width, viewNode.Height);
             
@@ -2019,10 +2019,10 @@
             {
                 UpdateLayout(edges, Target);
             }
-            _ = Parent.DiagramContent.Diagram.EndUpdateAsync();
-            await diagram.DoLayoutAsync();
+            _ = Parent.DiagramContent.Diagram.EndUpdate();
+            await diagram.DoLayout();
         }
-        else { _= Parent.DiagramContent.Diagram.DoLayoutAsync(); }
+        else { _= Parent.DiagramContent.Diagram.DoLayout(); }
         bool hasParent = false;
         string parentID = string.Empty;
         for (int i = 0; i < Parent.DiagramContent.TreeViewNodes.Count; i++)
@@ -2114,7 +2114,7 @@
         else
         {
             diagram.Redo();
-            await diagram.DoLayoutAsync();
+            await diagram.DoLayout();
         }
         if(diagram.SelectionSettings.Nodes.Count == 0)
         {
@@ -2256,12 +2256,12 @@
 
                 }
             }
-            await diagram.AddDiagramElementsAsync(nodes);
-            await diagram.AddDiagramElementsAsync(connectors);
+            await diagram.AddDiagramElements(nodes);
+            await diagram.AddDiagramElements(connectors);
             if(PatternChange)
                 await MindmapPatternChange(PatternValue);
-            await diagram.DoLayoutAsync();
-            await diagram.EndUpdateAsync();
+            await diagram.DoLayout();
+            await diagram.EndUpdate();
             UpdateTextBox();
           diagram.Constraints = DiagramConstraints.Default;
         }       
