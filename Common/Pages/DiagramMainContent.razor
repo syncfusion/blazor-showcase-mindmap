@@ -480,16 +480,16 @@
                 }
                 node.Annotations[0].Content = addedNode.Name;
                 Connector connector = Parent.MindMapPropertyPanel.SetConnectorDefault(diagram, orientation, (MindMapData["Connector"] as Connector), SelectedNode.ID, node.ID);
-                await diagram.AddDiagramElements(new DiagramObjectCollection<NodeBase>() { node, connector });
+                await diagram.AddDiagramElementsAsync(new DiagramObjectCollection<NodeBase>() { node, connector });
                 if (Parent.MindMapPropertyPanel.PatternChange)
                     await Parent.MindMapPropertyPanel.MindmapPatternChange(Parent.MindMapPropertyPanel.PatternValue);
                 Node node1 = diagram.GetObject(node.ID) as Node;
-                await diagram.DoLayout();
+                await diagram.DoLayoutAsync();
                 if(node1!=null)
                   diagram.Select(new ObservableCollection<IDiagramObject>() { node1 });
             }
         }
-        await diagram.EndUpdate();
+        await diagram.EndUpdateAsync();
         for (int i = 0; i < TreeViewNodes.Count; i++)
         {
             if ( TreeViewNodes!=null && this.selectedId == TreeViewNodes[i].Id && TreeViewNodes[i].HasChild == false)
@@ -610,7 +610,7 @@
             Parent.DiagramContent.Diagram.StartGroupAction();
             Parent.MindMapPropertyPanel.Drop(args);
             Parent.DiagramContent.Diagram.EndGroupAction();
-            _ = Parent.DiagramContent.Diagram.EndUpdate();
+            _ = Parent.DiagramContent.Diagram.EndUpdateAsync();
         }
     }
     /// <summary>
@@ -756,7 +756,7 @@
             HorizontalSpacing = value;
         else if (type == "Vertical")
             VerticalSpacing = value;
-        await diagram.EndUpdate();
+        await diagram.EndUpdateAsync();
     }
     /// <summary>
     /// This method to determine whether this command can execute or not.
