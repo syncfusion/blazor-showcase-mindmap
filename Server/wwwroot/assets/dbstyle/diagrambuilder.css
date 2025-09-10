@@ -605,6 +605,10 @@ border: 1px solid #D5D5D5;
     width: calc(100% + 20px);
 }
 
+.e-dlg-content {
+    margin-top: 20px;
+}
+
 .db-color-container,
 .db-text-container {
     width: 100%;
