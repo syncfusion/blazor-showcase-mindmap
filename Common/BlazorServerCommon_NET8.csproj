@@ -23,7 +23,7 @@
     <None Include="wwwroot\interop.js" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Syncfusion.Blazor" Version="*" />
+    <PackageReference Include="Syncfusion.Blazor" Version="31.1.17" />
   </ItemGroup>
   
   
