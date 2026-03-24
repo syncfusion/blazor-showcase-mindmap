@@ -38,16 +38,16 @@
             events.forEach(event => document.addEventListener(event, loadGTM, { once: true }));
         });
     </script>
+    <ResourcePreloader />
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
     <link href=@Urihelper.Uri rel="canonical" />
-    <link href="_content/Syncfusion.Blazor/styles/fluent.css" rel="stylesheet">
-    <link href="assets/db-icons1/style.css" rel="stylesheet" />
-    <link href="assets/dbstyle/diagrambuilder.css" rel="stylesheet" />
-    <script src="_content/BlazorWasmCommon_NET8/interop.js"></script>
-    <script src="_content/Syncfusion.Blazor/scripts/syncfusion-blazor.min.js" type="text/javascript"></script>
-    <HeadOutlet @rendermode="@InteractiveWebAssembly" />
+    <link href="_content/Syncfusion.Blazor/styles/fluent2.css" rel="stylesheet">
+    <link href="@Assets["assets/db-icons1/style.css"]" rel="stylesheet" />
+    <link href="@Assets["assets/dbstyle/diagrambuilder.css"]" rel="stylesheet" />
+    <script src="@Assets["_content/BlazorWasmCommon_NET10/interop.js"]"></script>
+    <HeadOutlet @rendermode="InteractiveWebAssembly" />
 </head>
 
 <body>
@@ -62,7 +62,7 @@
         z-index: 1;
         }
     </style>
-    <Routes @rendermode="@InteractiveWebAssembly" />
+    <Routes @rendermode="InteractiveWebAssembly" />
     <!-- Google Tag Manager (noscript) -->
     <!--Page Load-->
     <noscript>
@@ -86,7 +86,8 @@
             }
         }, 3000);
     </script>
-    <script src="_framework/blazor.web.js"></script>
+    <script src="@Assets["_content/Syncfusion.Blazor/scripts/syncfusion-blazor.min.js"]" type="text/javascript"></script>
+    <script src="@Assets["_framework/blazor.web.js"]"></script>
 </body>
 
 </html>
