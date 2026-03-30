@@ -7,7 +7,7 @@ Mind mapping is a high effective way to brainstorm and organize your thoughts or
 
 * [System requirements](https://blazor.syncfusion.com/documentation/system-requirements/)
 
-* [NET 8 WebAssembly Workload](https://learn.microsoft.com/en-us/aspnet/core/blazor/webassembly-build-tools-and-aot?view=aspnetcore-8.0#net-webassembly-build-tools)
+* [NET 10 WebAssembly Workload](https://learn.microsoft.com/en-us/aspnet/core/blazor/webassembly-build-tools-and-aot?view=aspnetcore-10.0#net-webassembly-build-tools)
 
 ## How to run the demo
 
@@ -21,10 +21,10 @@ Clone the repository.This repository contains Blazor MindMap Server app, Blazor 
 * Open the command prompt from the demo's directory.
 * Run the demo using the following command.
    
-   To run .NET 8 MindMap Server project
+   To run .NET 10 MindMap Server project
    > `dotnet run --project Server/MindMap.csproj`
 
-   To run .NET 8 MindMap WASM project
+   To run .NET 10 MindMap WASM project
    > `dotnet run --project WASM/MindMap.sln`
 
 ### Run the demo using Visual Studio

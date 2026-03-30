@@ -44,19 +44,19 @@
    <meta name="description" content="The showcase sample application has been built using blazor platform to create diagrams like mind map chart.">
    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
    <link href=@Urihelper.Uri rel="canonical" />
+   <ResourcePreloader />
    <link rel="icon" type="image/x-icon" href="favicon.ico">
    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-    <link href="_content/Syncfusion.Blazor/styles/fluent.css" rel="stylesheet">
+    <link href="_content/Syncfusion.Blazor/styles/fluent2.css" rel="stylesheet">
 
-   <link href="assets/db-icons1/style.css" rel="stylesheet" />
-   <link href="assets/dbstyle/diagrambuilder.css" rel="stylesheet" />
-   <script src="_content/BlazorServerCommon_NET8/interop.js" async type="text/javascript"></script>
-   <script src="_content/Syncfusion.Blazor/scripts/syncfusion-blazor.min.js" type="text/javascript"></script>
-   <HeadOutlet @rendermode="@InteractiveServer" />
+   <link href="@Assets["assets/db-icons1/style.css"]" rel="stylesheet" />
+   <link href="@Assets["assets/dbstyle/diagrambuilder.css"]" rel="stylesheet" />
+   <script src="@Assets["_content/BlazorServerCommon_NET10/interop.js"]" async type="text/javascript"></script>
+   <HeadOutlet @rendermode="InteractiveServer" />
 </head>
 
 <body>
-    <Routes @rendermode="@InteractiveServer" />
+    <Routes @rendermode="InteractiveServer" />
     <!-- Google Tag Manager (noscript) -->
     <!--Page Load-->
     <noscript>
@@ -74,7 +74,9 @@
         <environment include="Development">
         </environment>
     </div>
-    <script src="_framework/blazor.web.js"></script>
+    <ReconnectModal />
+    <script src="@Assets["_content/Syncfusion.Blazor/scripts/syncfusion-blazor.min.js"]" type="text/javascript"></script>
+    <script src="@Assets["_framework/blazor.web.js"]"></script>
 </body>
 
 </html>

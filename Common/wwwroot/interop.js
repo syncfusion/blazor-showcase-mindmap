@@ -99,6 +99,30 @@ function click() {
     document.getElementById('defaultfileupload').click();
 }
 
+function diagramNameKeyDown(args) {
+    if (args.which === 13) {
+        document.getElementById('diagramName').innerHTML = document.getElementById('diagramEditable').value;
+        document.getElementsByClassName('db-diagram-name-container')[0].classList.remove('db-edit-name');
+    }
+}
+
+function diagramNameChange(args, isSet) {
+    if (isSet) {
+        document.getElementById('diagramName').innerHTML = args;
+    }
+    else {
+        document.getElementById('diagramName').innerHTML = document.getElementById('diagramEditable').value;
+        document.getElementsByClassName('db-diagram-name-container')[0].classList.remove('db-edit-name');
+        //document.getElementById("exportfileName").value = document.getElementById('diagramName').innerHTML;
+    }
+}
+function renameDiagram1(args) {
+    document.getElementsByClassName('db-diagram-name-container')[0].classList.add('db-edit-name');
+    var element = document.getElementById('diagramEditable');
+    element.value = document.getElementById('diagramName').innerHTML;
+    element.focus();
+    element.select();
+}
 UtilityMethods_native = function (object) {
     var selectedItems = JSON.parse(object);    
     console.log(selectedItems);

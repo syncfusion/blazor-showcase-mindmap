@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MindMap", "MindMap\MindMap.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MindMap.Client", "MindMap.Client\MindMap.Client.csproj", "{C63FD885-D84A-4874-AEEE-DFCCD86F61CA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWasmCommon_NET8", "..\common\BlazorWasmCommon_NET8.csproj", "{EC4F09AB-66F3-4D44-8D0E-70AA8A893247}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWasmCommon_NET10", "..\common\BlazorWasmCommon_NET10.csproj", "{EC4F09AB-66F3-4D44-8D0E-70AA8A893247}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
