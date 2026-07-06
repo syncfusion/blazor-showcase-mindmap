@@ -1,13 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
-using System;
-using System.Threading.Tasks;
-using System.Collections.ObjectModel;
-using System.Globalization;
-using Syncfusion.Blazor.Diagram;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
-
+﻿using Syncfusion.Blazor.Diagram;
 
 namespace MindMap
 {

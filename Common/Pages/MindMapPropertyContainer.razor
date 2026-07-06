@@ -3,12 +3,9 @@
 @using System.Collections.Generic
 @using Syncfusion.Blazor.DropDowns
 @using Syncfusion.Blazor.Inputs
-@using Syncfusion.Blazor.Popups;
 @using Syncfusion.Blazor.Navigations
 @using Syncfusion.Blazor.Diagram
 @using System.Collections.ObjectModel
-@using Newtonsoft.Json.Linq;
-@using Syncfusion.Blazor.SplitButtons
 @using System.Drawing
 @inject IJSRuntime js
 
@@ -78,15 +75,15 @@
             <div class="col-xs-6 db-col-right">
                 <span class="db-prop-text-style">Type</span>
             </div>
-            <div class="col-xs-2 db-col-center" style="margin-left: -30px; ">
+            <div class="col-xs-2 db-col-center" style="margin-left: -50px; ">
                 <span class="db-prop-text-style">Stroke</span>
             </div>
-            <div class="col-xs-2 db-col-left" style="margin-left: 25px">
+            <div class="col-xs-2 db-col-left" style="margin-left: 15px;">
                 <span class="db-prop-text-style">Thickness</span>
             </div>
         </div>
     <div class="row">
-            <div  class="col-xs-6 db-col-left" style="width:90px;margin-top:3px">
+            <div  class="col-xs-5 db-col-left" style="width:70px;margin-top:3px">
             <SfDropDownList ID="strokeStyle" TValue="string" TItem="BorderStylesFields" PopupWidth="160px" Index="@strokeStyleValue" DataSource="@BorderStyles">
                 <DropDownListTemplates TItem="BorderStylesFields">
                     <ItemTemplate>
@@ -109,7 +106,7 @@
                     <SfColorPicker ID="mindmapStroke" ValueChange="OnStrokeColorChange" Mode="ColorPickerMode.Palette" @bind-Value="@strokeColorValue"></SfColorPicker>
             </div>
         </div>
-            <div class="col-xs-4 db-col-center" style="width:87px;margin-left: 34px;margin-top:4px;">
+            <div class="col-xs-7 db-col-center" style="width:110px;margin-left: 34px;margin-top:4px;">
                 <SfNumericTextBox ID="mindmapStrokeWidth" Format="###.##" Min="0" Step="0.5" @bind-Value="@mindMapStrokeWidth">
                 <NumericTextBoxEvents TValue="double" ValueChange="@OnStrokeWidthChange"></NumericTextBoxEvents>
             </SfNumericTextBox>
@@ -192,20 +189,20 @@
     <div class="db-prop-separator">
     </div>
     <div class="row db-prop-row">
-        <div class="col-xs-8 db-col-right db-prop-text-style" style="padding-top: 12px;">
+        <div class="col-xs-7 db-col-right db-prop-text-style" style="padding-top: 12px;">
             <span class="db-prop-text-style">Horizontal Spacing</span>
         </div>
-        <div  class="col-xs-4 db-col-left" style="padding-top: 8px">
+        <div  class="col-xs-5 db-col-left" style="padding-top: 8px">
             <SfNumericTextBox TValue="int?" Width="100%" @bind-Value="@horizontalValue" Min="20" Step="2" Format="###.##">
                 <NumericTextBoxEvents TValue="int?" ValueChange="OnHorizontalSpaceChange"></NumericTextBoxEvents>
             </SfNumericTextBox>
         </div>
     </div>
     <div class="row db-prop-row">
-        <div class="col-xs-8 db-col-right db-prop-text-style" style="padding-top: 12px;">
+        <div class="col-xs-7 db-col-right db-prop-text-style" style="padding-top: 12px;">
             <span class="db-prop-text-style">Vertical Spacing</span>
         </div>
-        <div  class="col-xs-4 db-col-left" style="padding-top: 8px;">
+        <div  class="col-xs-5 db-col-left" style="padding-top: 8px;">
             <SfNumericTextBox TValue="int?" Width="100%" @bind-Value="@verticalValue" Min="20" Step="2" Format="###.##">
                 <NumericTextBoxEvents TValue="int?" ValueChange="OnVerticalSpaceChange"></NumericTextBoxEvents>
             </SfNumericTextBox>

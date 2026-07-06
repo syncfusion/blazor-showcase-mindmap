@@ -1,7 +1,6 @@
 ﻿@using Syncfusion.Blazor.Navigations
 @using Syncfusion.Blazor.Buttons
 @using Syncfusion.Blazor.SplitButtons
-@using Syncfusion.Blazor.DropDowns
 @using Syncfusion.Blazor.Inputs
 
 @namespace MindMap
@@ -65,7 +64,7 @@
                             </SfDropDownButton>
 
                             <div class=@HideButtonCss style="background-color: @HideButtonBackground;margin-left:12px;margin-top:-2px;min-width:30px;min-height:20px;border-color:transparent">
-                                <SfButton ID="btnHideProperty" IconCss="sf-icon-properties tb-hide-button tb-icons" OnClick="@HidePropertyContainer"></SfButton>
+                                <SfButton ID="btnHideProperty" IconCss="sf-icon-properties tb-hide-button tb-icons" OnClick="@HidePropertyContainer" style="border-color: transparent;"></SfButton>
                           </div>
                         </Template>
                     </ToolbarItem>

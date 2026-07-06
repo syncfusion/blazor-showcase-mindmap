@@ -311,10 +311,8 @@ fill: black;
     
     .e-toolbar .e-toolbar-items .e-toolbar-item .e-dropdown-btn.tb-item-selected .e-btn-icon,
     .tb-property-open #btnHideProperty .tb-hide-button {
-        padding-left:2px;
-        margin-left:-6px;
-        margin-bottom:4px;
         color:white;
+        padding-bottom: 8px;
     }
 .e-toolbar-left  .e-toolbar-item.tb-item-selected .e-tbar-btn .e-icons.e-btn-icon {
     color: white;
