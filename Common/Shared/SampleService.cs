@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace MindMap.Shared
+﻿namespace MindMap.Shared
 {
     public class SampleService
     {
