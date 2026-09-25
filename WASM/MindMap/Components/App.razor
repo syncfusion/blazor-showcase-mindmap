@@ -1,15 +1,63 @@
 ﻿@page "/"
 @inject NavigationManager Urihelper
+
+@* SEO Variables - Single source of truth for all meta tags *@
+@{
+    string SeoTitle = "Interactive Mind Map Builder - Syncfusion Blazor Showcase";
+    string SeoDescription = "Interactive mind map builder for brainstorming and organizing ideas with branching topics.";
+    string SiteUrl = Urihelper.Uri.TrimEnd('/');
+    string ApplicationName = "Mind Map";
+    string Publisher = "Syncfusion";
+    string Language = "English";
+    string SocialImage = SiteUrl + "/diagram_component.svg";
+}
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Mind Map Maker - Syncfusion Blazor Components Showcase App</title>
+    
+    <!-- HTML Title -->
+    <title>@SeoTitle</title>
+    
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="@SeoTitle" />
+    <meta name="description" content="@SeoDescription" />
+    <meta name="robots" content="index, follow" />
+    <meta name="keywords" content="Mind Map, brainstorming, idea organization, productivity, planning, Blazor, Syncfusion" />
+    <meta name="publisher" content="@Publisher" />
+    <meta name="language" content="@Language" />
+    
+    <!-- Canonical URL -->
+    <link href="https://showcase.syncfusion.com/mind-map-maker/blazor/wasm/" rel="canonical" />
+    
+    <!-- Alternate Language Tags -->
+    <link rel="alternate" hreflang="en-US" href="@SiteUrl" />
+    <link rel="alternate" hreflang="x-default" href="@SiteUrl" />
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="@SeoTitle" />
+    <meta property="og:description" content="@SeoDescription" />
+    <meta property="og:url" content="@SiteUrl" />
+    <meta property="og:site_name" content="@ApplicationName" />
+    <meta property="og:image" content="@SocialImage" />
+    <meta property="og:image:alt" content="@ApplicationName Logo" />
+    <meta property="og:locale" content="en_US" />
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@SeoTitle" />
+    <meta name="twitter:description" content="@SeoDescription" />
+    <meta name="twitter:image" content="@SocialImage" />
+    <meta name="twitter:image:alt" content="@ApplicationName" />
+    <meta name="twitter:site" content="@@Syncfusion" />
+    
     <base href="/" />
     <!-- Google Tag Manager -->
-    <!-- Load GTM-P3WXFWCW immediately on page load  -->
+    <!-- Load GTM-WXZ6DX9B immediately on page load  -->
     <script>
         (function (w, d, s, l, i) {
             w[l] = w[l] || []; w[l].push({
@@ -18,7 +66,7 @@
             }); var f = d.getElementsByTagName(s)[0],
                 j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
                     'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
-        })(window, document, 'script', 'dataLayer', 'GTM-P3WXFWCW');
+        })(window, document, 'script', 'dataLayer', 'GTM-WXZ6DX9B');
     </script>
     <!-- Load GTM-W8WD8WN on user interaction -->
     <script>
@@ -42,17 +90,38 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
-    <link href="https://showcase.syncfusion.com/mind-map-maker/blazor/wasm/" rel="canonical" />
-    <meta property="og:title" content="Mind Map Maker - Syncfusion Blazor Components Showcase App" />
-    <meta property="og:description" content="The showcase sample application has been built using blazor platform to create diagrams like mind map chart." />
-    <meta property="og:url" content="https://showcase.syncfusion.com/mind-map-maker/blazor/wasm/" />
-    <meta property="og:image" content="@(Urihelper.BaseUri)diagram_component.svg" />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
     <link href="_content/Syncfusion.Blazor.Themes/fluent2.css" rel="stylesheet">
     <link href="@Assets["assets/db-icons1/style.css"]" rel="stylesheet" />
     <link href="@Assets["assets/dbstyle/diagrambuilder.css"]" rel="stylesheet" />
     <script src="@Assets["_content/BlazorWasmCommon_NET10/interop.js"]"></script>
+
+    
+    <!-- Schema.org Structured Data - SoftwareApplication -->
+    <script type="application/ld+json">
+    {
+      "@@context": "https://schema.org/",
+      "@@type": "SoftwareApplication",
+      "name": "@ApplicationName",
+      "description": "@SeoDescription",
+      "url": "@SiteUrl",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web",
+      "browserRequirements": "WebAssembly enabled browser",
+      "image": "@SocialImage",
+      "offers": {
+        "@@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@@type": "Organization",
+        "name": "@Publisher",
+        "url": "https://www.syncfusion.com"
+      },
+      "inLanguage": "en-US"
+    }
+    </script>
+    
     <HeadOutlet @rendermode="InteractiveWebAssembly" />
 </head>
 
@@ -72,7 +141,7 @@
     <!-- Google Tag Manager (noscript) -->
     <!--Page Load-->
     <noscript>
-        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P3WXFWCW" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WXZ6DX9B" height="0" width="0" style="display:none;visibility:hidden"></iframe>
     </noscript>
     <!--Interaction-->
     <noscript>
